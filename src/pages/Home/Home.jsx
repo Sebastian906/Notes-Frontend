@@ -9,6 +9,7 @@ import axiosInstance from '../../utils/axiosInstance'
 import Toast from '../../components/ToastMessage/Toast'
 import EmptyCard from '../../components/EmptyCard/EmptyCard'
 import AddNotesImg from '../../assets/images/add-notes.svg'
+import NoDataImg from '../../assets/images/no-data.svg'
 
 const Home = () => {
 
@@ -26,6 +27,8 @@ const Home = () => {
 
     const [allNotes, setAllNotes] = useState([]);
     const [userInfo, setUserInfo] = useState(null);
+
+    const [isSearch, setIsSearch] = useState(false);
 
     const navigate = useNavigate();
 
@@ -98,6 +101,27 @@ const Home = () => {
         }
     }
 
+    // Buscar por una nota
+    const onSearchNote = async (query) => {
+        try {
+            const response = await axiosInstance.get("/search-notes", {
+                params: { query },
+            });
+
+            if(response.data && response.data.notes) {
+                setIsSearch(true);
+                setAllNotes(response.data.notes);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleClearSearch = () => {
+        setIsSearch(false);
+        getAllNotes();
+    }
+
     useEffect(() => {
         getsUserInfo();
         getAllNotes();
@@ -106,7 +130,11 @@ const Home = () => {
 
     return (
         <>
-            <Navbar userInfo={userInfo}/>
+            <Navbar 
+                userInfo={userInfo} 
+                onSearchNote={onSearchNote}
+                handleClearSearch={handleClearSearch}
+            />
 
             <div className='container mx-auto'>
                 {allNotes.length > 0 ? (
@@ -126,7 +154,9 @@ const Home = () => {
                         ))}
                     </div>
                 ) : (
-                    <EmptyCard imgSrc={AddNotesImg} message={`Empiece a crear sus propias notas! Haga click en el boton 'AÑADIR' para agregar sus notas.`}/>
+                    <EmptyCard 
+                        imgSrc={isSearch ? NoDataImg : AddNotesImg} 
+                        message={isSearch ? `Oops, no se encontraron notas con esos datos.` : `Empiece a crear sus propias notas! Haga click en el boton 'AÑADIR' para agregar sus notas.`}/>
                 )}
             </div>
 
