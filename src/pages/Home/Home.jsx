@@ -74,6 +74,28 @@ const Home = () => {
         }
     }
 
+    // Borrar Notas
+
+    const deleteNote = async (data) => {
+        const noteId = data._id
+        try {
+            const response = await axiosInstance.delete("/delete-note/" + noteId);
+
+            if(response.data && !response.data.error) {
+                showMessage("Nota Borrada Exitosamente.", 'delete');
+                getAllNotes();
+            }
+        } catch (error) {
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.message
+            ) {
+                console.log("Ocurrio un error sin precedentes. Por favor intente de nuevo.");
+            }
+        }
+    }
+
     useEffect(() => {
         getsUserInfo();
         getAllNotes();
@@ -95,7 +117,7 @@ const Home = () => {
                             tags={item.tags}
                             isPinned={item.isPinned}
                             onEdit={()=>handleEdit(item)}
-                            onDelete={()=>{}}
+                            onDelete={()=>deleteNote(item)}
                             onPinNote={()=>{}}
                         />
                     ))}
