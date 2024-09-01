@@ -20,6 +20,10 @@ const Home = () => {
 
     const navigate = useNavigate();
 
+    const handleEdit = (noteDetails) => {
+        setOpenAddEditModal({ isShown: true, data: noteDetails, type: "edit" });
+    }
+
     // API de Obtener Usuarios
     const getsUserInfo = async () => {
         try {
@@ -68,7 +72,7 @@ const Home = () => {
                             content={item.content}
                             tags={item.tags}
                             isPinned={item.isPinned}
-                            onEdit={()=>{}}
+                            onEdit={()=>handleEdit(item)}
                             onDelete={()=>{}}
                             onPinNote={()=>{}}
                         />
@@ -103,6 +107,7 @@ const Home = () => {
                     onClose={() => {
                         setOpenAddEditModal({ isShown: false, type: 'add', date: null });
                     }}
+                    getAllNotes={getAllNotes}
                 />
 
             </Modal>
